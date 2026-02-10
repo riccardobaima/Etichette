@@ -3,14 +3,20 @@ import qrcode
 from fpdf import FPDF
 import os
 
-# 1. CARICAMENTO
-try:
-    df = pd.read_excel('torino.xlsx')
-except FileNotFoundError:
-    df = pd.read_csv('torino.xlsx - Foglio1.csv')
+# --- 1. SCELTA DEL FILE ---
+# Ora puoi scrivere 'torino.xlsx' o 'milano.xlsx' quando lanci il programma
+nome_input = input("Inserisci il nome del file Excel (es. torino.xlsx): ")
 
-# --- PULIZIA DATE (Rimuove l'orario 00:00:00) ---
-# Trasformiamo le colonne in date vere e poi in testo formatato GG/MM/AAAA
+# Ricaviamo il nome senza estensione per usarlo nel nome del PDF finale
+base_name = os.path.splitext(nome_input)[0]
+
+try:
+    df = pd.read_excel(nome_input)
+except Exception as e:
+    print(f"Errore: Impossibile trovare o leggere {nome_input}. Assicurati che sia nella cartella Etichette.")
+    exit()
+
+# --- PULIZIA DATE ---
 for col in ['DataRilascio', 'DataScadenza']:
     df[col] = pd.to_datetime(df[col]).dt.strftime('%d/%m/%Y')
 
@@ -31,7 +37,6 @@ for index, row in df.iterrows():
     cellula_info = f"Cellula: {row['CellulaID']} - {row['Posizione']}"
     descrizione = str(row['Descrizione'])
     
-    # Ora row['DataRilascio'] è già pulita senza l'orario
     testo_qr = (
         f"Ente rilasciante: {row['Comune']}\n"
         f"N° autorizzazione: {row['ProtocolloEnte']}\n"
@@ -81,5 +86,7 @@ for index, row in df.iterrows():
             pdf.add_page()
             y_attuale = 10
 
-pdf.output("etichette_torino_finale.pdf")
-print("PDF GENERATO! Date pulite correttamente.")
+# Salviamo il PDF col nome dinamico (es: etichette_torino.pdf)
+nome_output = f"etichette_{base_name}.pdf"
+pdf.output(nome_output)
+print(f"PDF GENERATO: {nome_output}")
