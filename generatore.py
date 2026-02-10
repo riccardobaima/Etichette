@@ -72,6 +72,17 @@ for index, row in df.iterrows():
     pdf.multi_cell(36, 4, text=descrizione, align='L')
     
     # 5. QR CODE
+    # --- 1. DEFINISCI IL LINK ---
+    # Sostituisci 'tuo-utente' con il tuo nome GitHub e 'tuo-repo' con il nome del progetto
+    link_sito = "https://riccardobaima.github.io/Etichette/" 
+
+    # --- 2. GENERA IL QR CON IL LINK (Invece del testo semplice) ---
+    img = qrcode.make(link_sito)
+    qr_path = f"temp_qr/qr_{index}.png"
+    img.save(qr_path)
+
+    # --- 3. DISEGNO (Questa è la sezione che hai indicato tu) ---
+    # Non serve cambiare nulla qui, perché qr_path ora punta a un QR col link!
     pdf.image(qr_path, x=x_attuale + 5, y=y_attuale + 68, w=30)
 
     # Logica Griglia
