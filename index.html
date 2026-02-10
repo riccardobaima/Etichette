@@ -3,23 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scheda Tecnica Cellula</title>
+    <title>Scheda Tecnica</title>
     <style>
         body { font-family: sans-serif; text-align: center; background: #f4f4f4; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        img { max-width: 150px; margin-bottom: 20px; }
-        h1 { color: #333; font-size: 24px; }
-        p { color: #666; line-height: 1.6; }
-        .btn { display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-width: 400px; margin: auto; }
+        img { max-width: 120px; margin-bottom: 15px; }
+        h1 { color: #2c3e50; font-size: 22px; margin-bottom: 5px; }
+        .info-box { background: #ecf0f1; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: left; }
+        .label { font-weight: bold; color: #7f8c8d; font-size: 11px; text-transform: uppercase; display: block; }
+        .value { font-size: 18px; color: #34495e; display: block; margin-bottom: 10px; font-weight: bold; }
+        .btn { display: inline-block; padding: 12px 25px; background: #27ae60; color: white; text-decoration: none; border-radius: 30px; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="card">
-        <img src="logo.jpg" alt="Logo Azienda">
+        <img src="logo.jpg" alt="Logo">
         <h1>Scheda Informativa</h1>
-        <p>Benvenuto nella pagina ufficiale della cellula.</p>
-        <p>Qui potrai trovare i dettagli tecnici e le autorizzazioni aggiornate in tempo reale.</p>
+        
+        <div class="info-box">
+            <span class="label">Proprietario / Ditta</span>
+            <span id="ditta" class="value">---</span>
+            
+            <span class="label">ID Cellula</span>
+            <span id="cellula" class="value">---</span>
+            
+            <span class="label">Scadenza Autorizzazione</span>
+            <span id="scadenza" class="value">---</span>
+        </div>
+
+        <p style="font-size: 13px; color: #95a5a6;">I dati sopra riportati sono estratti dal database ufficiale.</p>
         <a href="mailto:assistenza@tuaazienda.it" class="btn">Richiedi Assistenza</a>
     </div>
+
+    <script>
+        // Questa è la parte "magica" che legge i dati dall'URL del QR
+        const params = new URLSearchParams(window.location.search);
+        
+        // Se nel link c'è 'ditta', scrivilo nel box corrispondente, altrimenti scrivi 'Non disponibile'
+        document.getElementById('ditta').innerText = params.get('ditta') || "Dato non presente";
+        document.getElementById('cellula').innerText = params.get('cellula') || "Dato non presente";
+        document.getElementById('scadenza').innerText = params.get('scadenza') || "Dato non presente";
+    </script>
 </body>
 </html>
