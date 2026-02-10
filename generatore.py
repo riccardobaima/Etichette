@@ -4,16 +4,13 @@ from fpdf import FPDF
 import os
 
 # --- 1. SCELTA DEL FILE ---
-# Ora puoi scrivere 'torino.xlsx' o 'milano.xlsx' quando lanci il programma
 nome_input = input("Inserisci il nome del file Excel (es. torino.xlsx): ")
-
-# Ricaviamo il nome senza estensione per usarlo nel nome del PDF finale
 base_name = os.path.splitext(nome_input)[0]
 
 try:
     df = pd.read_excel(nome_input)
 except Exception as e:
-    print(f"Errore: Impossibile trovare o leggere {nome_input}. Assicurati che sia nella cartella Etichette.")
+    print(f"Errore: Impossibile trovare o leggere {nome_input}.")
     exit()
 
 # --- PULIZIA DATE ---
@@ -37,60 +34,39 @@ for index, row in df.iterrows():
     cellula_info = f"Cellula: {row['CellulaID']} - {row['Posizione']}"
     descrizione = str(row['Descrizione'])
     
-    testo_qr = (
-        f"Ente rilasciante: {row['Comune']}\n"
-        f"N° autorizzazione: {row['ProtocolloEnte']}\n"
-        f"Data rilascio: {row['DataRilascio']}\n"
-        f"Data scadenza: {row['DataScadenza']}"
-    )
-
-    # Genera QR
-    img = qrcode.make(testo_qr)
-    qr_path = f"temp_qr/qr_{index}.png"
-    img.save(qr_path)
-
-    # --- DISEGNO ---
-    pdf.rect(x_attuale, y_attuale, 40, 100) 
-
-    # 1. LOGO AZIENDALE
-    if os.path.exists('logo.jpg'):
-        pdf.image('logo.jpg', x=x_attuale + 10, y=y_attuale + 3, w=20)
-    
-    # 2. DITTA
-    pdf.set_font("Helvetica", 'B', 9)
-    pdf.set_xy(x_attuale, y_attuale + 18)
-    pdf.multi_cell(40, 5, text=ditta, align='C')
-    
-    # 3. CELLULA
-    pdf.set_font("Helvetica", 'B', 10)
-    pdf.set_xy(x_attuale + 2, y_attuale + 32) 
-    pdf.cell(36, 5, text=cellula_info, align='L')
-        
-    # 4. DESCRIZIONE
-    pdf.set_font("Helvetica", '', 8)
-    pdf.set_xy(x_attuale + 2, y_attuale + 40)
-    pdf.multi_cell(36, 4, text=descrizione, align='L')
-    
-    # Creiamo un link "intelligente" che porta con sé i dati della riga
-    # Usiamo f-string per inserire Ditta e CellulaID nell'indirizzo
+    # --- LOGICA LINK DINAMICO ---
+    # Qui costruiamo il link che la pagina HTML leggerà
     link_personalizzato = (
         f"https://riccardobaima.github.io/Etichette/?"
-        f"ditta={row['Ditta']}&"
+        f"ditta={ditta}&"
         f"cellula={row['CellulaID']}&"
         f"scadenza={row['DataScadenza']}"
-    ).replace(" ", "%20") # Sostituisce gli spazi con codici web validi
-    
-    
-    # 5. QR CODE
-    # --- 1. DEFINISCI IL LINK ---
-    link_sito = "https://riccardobaima.github.io/Etichette/" 
+    ).replace(" ", "%20")
 
-    # --- 2. GENERA L'IMMAGINE DEL QR ---
+    # --- GENERAZIONE QR ---
     img = qrcode.make(link_personalizzato)
     qr_path = f"temp_qr/qr_{index}.png"
     img.save(qr_path)
 
-    # --- 3. DISEGNO (Questa è la sezione che hai indicato tu) ---
+    # --- DISEGNO ETICHETTA ---
+    pdf.rect(x_attuale, y_attuale, 40, 100) 
+
+    if os.path.exists('logo.jpg'):
+        pdf.image('logo.jpg', x=x_attuale + 10, y=y_attuale + 3, w=20)
+    
+    pdf.set_font("Helvetica", 'B', 9)
+    pdf.set_xy(x_attuale, y_attuale + 18)
+    pdf.multi_cell(40, 5, text=ditta, align='C')
+    
+    pdf.set_font("Helvetica", 'B', 10)
+    pdf.set_xy(x_attuale + 2, y_attuale + 32) 
+    pdf.cell(36, 5, text=cellula_info, align='L')
+        
+    pdf.set_font("Helvetica", '', 8)
+    pdf.set_xy(x_attuale + 2, y_attuale + 40)
+    pdf.multi_cell(36, 4, text=descrizione, align='L')
+    
+    # Inserimento del QR generato col link
     pdf.image(qr_path, x=x_attuale + 5, y=y_attuale + 68, w=30)
 
     # Logica Griglia
@@ -105,7 +81,6 @@ for index, row in df.iterrows():
             pdf.add_page()
             y_attuale = 10
 
-# Salviamo il PDF col nome dinamico (es: etichette_torino.pdf)
 nome_output = f"etichette_{base_name}.pdf"
 pdf.output(nome_output)
 print(f"PDF GENERATO: {nome_output}")
