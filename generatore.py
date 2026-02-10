@@ -71,18 +71,26 @@ for index, row in df.iterrows():
     pdf.set_xy(x_attuale + 2, y_attuale + 40)
     pdf.multi_cell(36, 4, text=descrizione, align='L')
     
+    # Creiamo un link "intelligente" che porta con sé i dati della riga
+    # Usiamo f-string per inserire Ditta e CellulaID nell'indirizzo
+    link_personalizzato = (
+        f"https://riccardobaima.github.io/Etichette/?"
+        f"ditta={row['Ditta']}&"
+        f"cellula={row['CellulaID']}&"
+        f"scadenza={row['DataScadenza']}"
+    ).replace(" ", "%20") # Sostituisce gli spazi con codici web validi
+    
+    
     # 5. QR CODE
     # --- 1. DEFINISCI IL LINK ---
-    # Sostituisci 'tuo-utente' con il tuo nome GitHub e 'tuo-repo' con il nome del progetto
     link_sito = "https://riccardobaima.github.io/Etichette/" 
 
-    # --- 2. GENERA IL QR CON IL LINK (Invece del testo semplice) ---
-    img = qrcode.make(link_sito)
+    # --- 2. GENERA L'IMMAGINE DEL QR ---
+    img = qrcode.make(link_personalizzato)
     qr_path = f"temp_qr/qr_{index}.png"
     img.save(qr_path)
 
     # --- 3. DISEGNO (Questa è la sezione che hai indicato tu) ---
-    # Non serve cambiare nulla qui, perché qr_path ora punta a un QR col link!
     pdf.image(qr_path, x=x_attuale + 5, y=y_attuale + 68, w=30)
 
     # Logica Griglia
