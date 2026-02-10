@@ -31,7 +31,7 @@ contatore_colonna = 0
 for index, row in df.iterrows():
     # --- DATI ---
     ditta = str(row['Ditta'])
-    cellula_completa = f"{row['CellulaID']} - {row['Posizione']}"
+    cellula_info = f"{row['CellulaID']} - {row['Posizione']}"
     descrizione = str(row['Descrizione'])
     
     # --- LOGICA LINK DINAMICO ---
@@ -39,7 +39,7 @@ for index, row in df.iterrows():
     link_personalizzato = (
         f"https://riccardobaima.github.io/Etichette/?"
         f"ditta={ditta}&"
-        f"cellula={cellula_completa}&"
+        f"cellula={cellula_info}&"
         f"protocollo={row['ProtocolloEnte']}&"
         f"scadenza={row['DataScadenza']}"
     ).replace(" ", "%20")
@@ -61,7 +61,7 @@ for index, row in df.iterrows():
     
     pdf.set_font("Helvetica", 'B', 10)
     pdf.set_xy(x_attuale + 2, y_attuale + 32) 
-    pdf.cell(36, 5, text=cellula_info, align='L')
+    pdf.cell(36, 5, text=f"Cellula: {cellula_info}", align='L')
         
     pdf.set_font("Helvetica", '', 8)
     pdf.set_xy(x_attuale + 2, y_attuale + 40)
