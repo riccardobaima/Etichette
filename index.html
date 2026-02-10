@@ -11,7 +11,8 @@
         h1 { color: #2c3e50; font-size: 22px; margin-bottom: 5px; }
         .info-box { background: #ecf0f1; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: left; }
         .label { font-weight: bold; color: #7f8c8d; font-size: 11px; text-transform: uppercase; display: block; }
-        .value { font-size: 18px; color: #34495e; display: block; margin-bottom: 10px; font-weight: bold; }
+        .value { font-size: 17px; color: #34495e; display: block; margin-bottom: 12px; font-weight: bold; border-bottom: 1px solid #dcdde1; padding-bottom: 5px; }
+        .value:last-child { border-bottom: none; }
         .btn { display: inline-block; padding: 12px 25px; background: #27ae60; color: white; text-decoration: none; border-radius: 30px; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
@@ -24,25 +25,25 @@
             <span class="label">Proprietario / Ditta</span>
             <span id="ditta" class="value">---</span>
             
-            <span class="label">ID Cellula</span>
+            <span class="label">ID Cellula e Posizione</span>
             <span id="cellula" class="value">---</span>
+
+            <span class="label">Numero Autorizzazione</span>
+            <span id="protocollo" class="value">---</span>
             
             <span class="label">Scadenza Autorizzazione</span>
             <span id="scadenza" class="value">---</span>
         </div>
 
-        <p style="font-size: 13px; color: #95a5a6;">I dati sopra riportati sono estratti dal database ufficiale.</p>
         <a href="mailto:assistenza@tuaazienda.it" class="btn">Richiedi Assistenza</a>
     </div>
 
     <script>
-        // Questa è la parte "magica" che legge i dati dall'URL del QR
         const params = new URLSearchParams(window.location.search);
-        
-        // Se nel link c'è 'ditta', scrivilo nel box corrispondente, altrimenti scrivi 'Non disponibile'
-        document.getElementById('ditta').innerText = params.get('ditta') || "Dato non presente";
-        document.getElementById('cellula').innerText = params.get('cellula') || "Dato non presente";
-        document.getElementById('scadenza').innerText = params.get('scadenza') || "Dato non presente";
+        document.getElementById('ditta').innerText = params.get('ditta') || "---";
+        document.getElementById('cellula').innerText = params.get('cellula') || "---";
+        document.getElementById('protocollo').innerText = params.get('protocollo') || "---";
+        document.getElementById('scadenza').innerText = params.get('scadenza') || "---";
     </script>
 </body>
 </html>
